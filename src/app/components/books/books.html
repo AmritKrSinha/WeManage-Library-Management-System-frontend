@@ -1,0 +1,164 @@
+<div class="books-page">
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">
+  <img src="images/logo.png" alt="Logo" class="logo-img">
+
+</div>
+        <h1 class="logo-text">WeManage</h1>
+      </div>
+
+      <nav class="menu">
+        <a routerLink="/users" routerLinkActive="active" class="menu-item">Users</a>
+        <a routerLink="/books" routerLinkActive="active" class="menu-item">Books</a>
+        <a routerLink="/book-copies" routerLinkActive="active" class="menu-item">Book Copies</a>
+        <a routerLink="/borrows" routerLinkActive="active" class="menu-item">Borrows</a>
+        <a routerLink="/fines" routerLinkActive="active" class="menu-item">Fines</a>
+      </nav>
+
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <header class="header">
+        <h2>Books</h2>
+        <div class="search-container">
+          <input
+  type="text"
+  class="search-box"
+  placeholder="Search books..."
+  [(ngModel)]="searchText"
+  (input)="searchBooks()"   
+/>
+        </div>
+      </header>
+
+      <!-- Book Table -->
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Book ID</th>
+              <th>Book Name</th>
+              <th>Author</th>
+              <th>Genre</th>
+              <th>Publisher</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let book of books">
+              <td>{{ book.bookId }}</td>
+              <td>{{ book.bookName }}</td>
+              <td>{{ book.author }}</td>
+              <td>{{ book.genre }}</td>
+              <td>{{ book.publisher }}</td>
+              <td>
+                <button class="btn-view" (click)="openViewPopup(book)">View</button>
+                <button class="btn-update" (click)="openEditPopup(book)">Update</button>
+                <button class="btn-delete" (click)="openDeletePopup(book)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add New Book Button -->
+      <div class="actions">
+        <button class="btn-primary" (click)="openAddPopup()">Add New Book</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ADD BOOK POPUP -->
+<div class="popup-backdrop" *ngIf="showAddPopup">
+  <div class="popup">
+    <h3>Add New Book</h3>
+    <form (ngSubmit)="saveNewBook()" #addBookForm="ngForm">
+      
+      <label>Book Name:</label>
+      <input type="text" [(ngModel)]="newBook.bookName" name="bookName" required />
+
+      <label>Author:</label>
+      <input type="text" [(ngModel)]="newBook.author" name="author" required />
+
+       <div class="form-group">
+      <label for="genre">Genre</label>
+      <select id="genre" name="genre" [(ngModel)]="newBook.genre" required>
+        <option value="" disabled selected>Select Genre</option>
+        <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
+      </select>
+    </div>
+
+      
+      
+
+      <label>Publisher:</label>
+      <input type="text" [(ngModel)]="newBook.publisher" name="publisher" />
+
+      <div class="popup-actions">
+        <button type="submit" class="btn-primary">Save</button>
+        <button type="button" class="btn-secondary" (click)="closeAddPopup()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT BOOK POPUP -->
+<div class="popup-backdrop" *ngIf="showEditPopup">
+  <div class="popup">
+    <h3>Edit Book</h3>
+    <form (ngSubmit)="saveEditedBook()" #editBookForm="ngForm">
+      <label>Book ID:</label>
+      <input type="number" [(ngModel)]="selectedBook.bookId" name="bookId" readonly />
+
+      <label>Book Name:</label>
+      <input type="text" [(ngModel)]="selectedBook.bookName" name="bookName" required />
+
+      <label>Author:</label>
+      <input type="text" [(ngModel)]="selectedBook.author" name="author" required />
+
+      <label>Genre:</label>
+      <input type="text" [(ngModel)]="selectedBook.genre" name="genre" />
+
+      <label>Publisher:</label>
+      <input type="text" [(ngModel)]="selectedBook.publisher" name="publisher" />
+
+      <div class="popup-actions">
+        <button type="submit" class="btn-primary">Update</button>
+        <button type="button" class="btn-secondary" (click)="closeEditPopup()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- DELETE BOOK POPUP -->
+<div class="popup-backdrop" *ngIf="showDeletePopup">
+  <div class="popup">
+    <h3>Confirm Delete</h3>
+    <p>Are you sure you want to delete <strong>{{ selectedBook.bookName }}</strong>?</p>
+    <div class="popup-actions">
+      <button class="btn-danger" (click)="confirmDelete()">Yes, Delete</button>
+      <button class="btn-secondary" (click)="closeDeletePopup()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW BOOK POPUP -->
+<div class="popup-backdrop" *ngIf="showViewPopup">
+  <div class="popup">
+    <h3>Book Details</h3>
+    <p><strong>ID:</strong> {{ selectedBook.bookId }}</p>
+    <p><strong>Name:</strong> {{ selectedBook.bookName }}</p>
+    <p><strong>Author:</strong> {{ selectedBook.author }}</p>
+    <p><strong>Genre:</strong> {{ selectedBook.genre }}</p>
+    <p><strong>Publisher:</strong> {{ selectedBook.publisher }}</p>
+    <div class="popup-actions">
+      <button class="btn-secondary" (click)="closeViewPopup()">Close</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,162 @@
+<div class="books-page">
+  <div class="layout">
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">
+  <img src="images/logo.png" alt="Logo" class="logo-img">
+
+</div>
+
+
+        <h1 class="logo-text">WeManage</h1>
+      </div>
+
+      <nav class="menu">
+        <a routerLink="/users" routerLinkActive="active" class="menu-item">Users</a>
+        <a routerLink="/books" routerLinkActive="active" class="menu-item">Books</a>
+        <a routerLink="/book-copies" routerLinkActive="active" class="menu-item">Book Copies</a>
+        <a routerLink="/borrows" routerLinkActive="active" class="menu-item">Borrows</a>
+        <a routerLink="/fines" routerLinkActive="active" class="menu-item">Fines</a>
+      </nav>
+
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </aside>
+
+    
+    <!-- Main Content -->
+    <main class="content">
+      <div class="header">
+        <h2>Book Copies</h2>
+        <div class="search-container">
+          <input type="text" class="search-box" placeholder="Search book copies..."
+                 [(ngModel)]="searchText" (input)="searchCopies()" />
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Copy ID</th>
+              <th>Book Name</th>
+              <th>Status</th>
+              <th>Purchase Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let copy of filteredCopies">
+              <td>{{ copy.copyId }}</td>
+              <td>{{ copy.book.bookName }}</td>
+              <td>
+                <span class="status"
+                      [ngClass]="{'available': copy.copyStatus==='Available','borrowed': copy.copyStatus==='Borrowed'}">
+                  {{ copy.copyStatus }}
+                </span>
+              </td>
+              <td>{{ copy.purchaseDate | date:'yyyy-MM-dd' }}</td>
+              <td class="actions">
+                <button class="btn-view" (click)="openViewPopup(copy)">View</button>
+                <button class="btn-update" (click)="openUpdatePopup(copy)">Update</button>
+                <button class="btn-delete" (click)="openDeletePopup(copy)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add Copy Button -->
+      <div class="add-button-container">
+        <button class="btn-primary" (click)="openAddPopup()">Add New Copy</button>
+      </div>
+    </main>
+  </div>
+
+ 
+ <!-- Add Copy Popup -->
+<div class="popup" *ngIf="showAddPopup">
+  <div class="popup-content">
+    <h3>Add New Book Copy</h3>
+    <form>
+      <label>Book</label>
+      <select [(ngModel)]="newCopy.bookId" name="bookId" required>
+        <option value="" disabled>Select a book</option>
+        <option *ngFor="let book of books" [value]="book.bookId">{{ book.bookName }}</option>
+      </select>
+
+      <label>Purchase Date</label>
+      <input type="date" [(ngModel)]="newCopy.purchaseDate" name="purchaseDate" />
+
+      <label>Status</label>
+      <select [(ngModel)]="newCopy.copyStatus" name="copyStatus">
+        <option value="Available">Available</option>
+        <option value="Borrowed">Borrowed</option>
+      </select>
+
+      <div class="popup-actions">
+        <button type="button" class="btn-primary" (click)="saveNewCopy()">Save</button>
+        <button type="button" class="btn-secondary" (click)="closeAddPopup()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <!-- Update Popup -->
+  <div class="popup" *ngIf="showUpdatePopup">
+    <div class="popup-content">
+      <h3>Update Book Copy</h3>
+      <form>
+        <label>Copy ID</label>
+        <input type="text" [(ngModel)]="selectedCopy.copyId" name="copyId" disabled />
+
+        <label>Book</label>
+        <select [(ngModel)]="selectedCopy.bookId" name="bookId" required>
+          <option *ngFor="let book of books" [ngValue]="book.bookId">{{ book.bookName }}</option>
+        </select>
+
+        <label>Purchase Date</label>
+        <input type="date" [(ngModel)]="selectedCopy.purchaseDate" name="purchaseDate" required />
+
+        <label>Status</label>
+        <select [(ngModel)]="selectedCopy.copyStatus" name="copyStatus">
+          <option value="Available">Available</option>
+          <option value="Borrowed">Borrowed</option>
+        </select>
+
+        <div class="popup-actions">
+          <button type="button" class="btn-primary" (click)="saveUpdatedCopy()">Save</button>
+          <button type="button" class="btn-secondary" (click)="closeUpdatePopup()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Popup -->
+  <div class="popup" *ngIf="showViewPopup">
+    <div class="popup-content">
+      <h3>Book Copy Details</h3>
+      <p><strong>Copy ID:</strong> {{ selectedCopy.copyId }}</p>
+      <p><strong>Book Name:</strong> {{ selectedCopy.bookName || selectedCopy.book?.bookName }}</p>
+      <p><strong>Status:</strong> {{ selectedCopy.copyStatus }}</p>
+      <p><strong>Purchase Date:</strong> {{ selectedCopy.purchaseDate | date:'yyyy-MM-dd' }}</p>
+      <div class="popup-actions">
+        <button class="btn-secondary" (click)="closeViewPopup()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Popup -->
+  <div class="popup" *ngIf="showDeletePopup">
+    <div class="popup-content">
+      <h3>Confirm Delete</h3>
+      <p>Are you sure you want to delete this copy?</p>
+      <div class="popup-actions">
+        <button class="btn-primary" (click)="confirmDeleteCopy()">Yes</button>
+        <button class="btn-secondary" (click)="closeDeletePopup()">No</button>
+      </div>
+    </div>
+  </div>
+</div>

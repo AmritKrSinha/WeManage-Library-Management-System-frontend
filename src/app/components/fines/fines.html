@@ -1,0 +1,139 @@
+<div class="fines-page">
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">
+  <img src="images/logo.png" alt="Logo" class="logo-img">
+
+</div>
+        <h1 class="logo-text">WeManage</h1>
+      </div>
+      <nav class="menu">
+        <a routerLink="/users" routerLinkActive="active" class="menu-item">Users</a>
+        <a routerLink="/books" routerLinkActive="active" class="menu-item">Books</a>
+        <a routerLink="/book-copies" routerLinkActive="active" class="menu-item">Book Copies</a>
+        <a routerLink="/borrows" routerLinkActive="active" class="menu-item">Borrows</a>
+        <a routerLink="/fines" routerLinkActive="active" class="menu-item">Fines</a>
+      </nav>
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </aside>
+
+
+    <!-- Main Content -->
+    <main class="content">
+      <header class="header">
+        <h2>Fines</h2>
+        <div class="search-container">
+          <input type="text" class="search-box" placeholder="Search fines..."
+                 [(ngModel)]="searchText" (input)="searchFines()" />
+        </div>
+      </header>
+
+      <!-- Fines Table -->
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Fine ID</th>
+              <th>User - Book</th>
+              <th>Amount</th>
+              <th>Paid</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let fine of filteredFines">
+              <td>{{ fine.fineId }}</td>
+              <td>{{ fine.userDisplay }}</td>
+              <td>₹{{ fine.amount }}</td>
+              <td>{{ fine.paidStatus === 'PAID' ? 'Yes' : 'No' }}</td>
+              <td>
+                <button class="btn-view" (click)="openViewPopup(fine)">View</button>
+                <button class="btn-update" (click)="openUpdatePopup(fine)">Update</button>
+                <button class="btn-delete" (click)="openDeletePopup(fine)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add Fine Button -->
+      <div class="actions">
+        <button class="btn-primary" (click)="openAddPopup()">Add Fine</button>
+      </div>
+    </main>
+
+    <!-- Add / Update Fine Popup -->
+    <div class="popup-backdrop" *ngIf="showAddPopup || showUpdatePopup">
+      <div class="popup">
+        <h3>{{ showAddPopup ? 'Add Fine' : 'Update Fine' }}</h3>
+
+        <!-- Borrow Dropdown -->
+        <label>Borrow</label>
+        <select [(ngModel)]="currentFine.borrowId" (ngModelChange)="onBorrowChange($event)">
+          <option [ngValue]="null">Select Borrow</option>
+          <option *ngFor="let borrow of borrows" [ngValue]="borrow.borrowId">
+            {{ borrow.userName }} - {{ borrow.bookCopyDisplay }}
+          </option>
+        </select>
+
+        <!-- Per-Day Fine -->
+        <label>Per Day Fine</label>
+        <input type="number" [(ngModel)]="currentFine.perDayFine" (input)="calculateFine()" />
+
+        <!-- Extra Charges -->
+        <label>Extra Charges</label>
+        <input type="number" [(ngModel)]="currentFine.extraCharges" (input)="calculateFine()" />
+
+        <!-- Total Fine -->
+        <label>Total Fine</label>
+        <div class="calculated-fine">₹{{ currentFine.amount || 0 }}</div>
+
+        <!-- Paid Status -->
+        <label>Paid</label>
+        <select [(ngModel)]="currentFine.paid">
+          <option [ngValue]="false">No</option>
+          <option [ngValue]="true">Yes</option>
+        </select>
+
+        <div class="popup-actions">
+          <button class="btn-primary"
+                  (click)="showAddPopup ? saveNewFine() : saveUpdatedFine()">
+            {{ showAddPopup ? 'Add' : 'Update' }}
+          </button>
+          <button class="btn-secondary"
+                  (click)="showAddPopup ? closeAddPopup() : closeUpdatePopup()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Fine Popup -->
+    <div class="popup-backdrop" *ngIf="showDeletePopup && selectedFine">
+      <div class="popup">
+        <h3>Delete Fine?</h3>
+        <p>Are you sure you want to delete Fine ID {{ selectedFine.fineId }}?</p>
+        <div class="popup-actions">
+          <button class="btn-danger" (click)="confirmDeleteFine()">Yes, Delete</button>
+          <button class="btn-secondary" (click)="closeDeletePopup()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Fine Popup -->
+    <div class="popup-backdrop" *ngIf="showViewPopup && selectedFine">
+      <div class="popup">
+        <h3>Fine Details</h3>
+        <p><strong>Fine ID:</strong> {{ selectedFine.fineId }}</p>
+        <p><strong>User - Book:</strong> {{ selectedFine.userDisplay }}</p>
+        <p><strong>Per Day Fine:</strong> ₹{{ selectedFine.perDayFine }}</p>
+        <p><strong>Extra Charges:</strong> ₹{{ selectedFine.extraCharges }}</p>
+        <p><strong>Total Amount:</strong> ₹{{ selectedFine.amount }}</p>
+        <p><strong>Paid:</strong> {{ selectedFine.paidStatus === 'PAID' ? 'Yes' : 'No' }}</p>
+        <div class="popup-actions">
+          <button class="btn-secondary" (click)="closeViewPopup()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

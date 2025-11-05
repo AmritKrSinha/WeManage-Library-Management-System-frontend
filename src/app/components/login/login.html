@@ -1,0 +1,48 @@
+<div class="login-container">
+  <div class="overlay">
+    <div class="login-box">
+      <div class="logo-container">
+  <img src="images/logo.png" alt="Logo" class="logo-img">
+  <h1 class="logo-text">WeManage</h1>
+</div>
+
+
+      <form class="login-form" (ngSubmit)="onLogin()" #form="ngForm">
+        <label>
+          <p>Username</p>
+          <div class="input-field">
+            <span class="material-symbols-outlined icon"></span>
+            <input type="email"
+              name="email"
+              [(ngModel)]="loginData.userId"
+              required
+              placeholder="Enter your userId" />
+          </div>
+        </label>
+
+        <label>
+          <p>Password</p>
+          <div class="input-field">
+            <span class="material-symbols-outlined icon"></span>
+            <input type="password"
+              name="password"
+              [(ngModel)]="loginData.password"
+              required
+              placeholder="Enter your password" />
+          </div>
+        </label>
+
+        <div class="forgot">
+          <a href="#">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+      </form>
+
+      <div class="footer">
+        <p>© 2025 Library Systems Inc. All Rights Reserved.</p>
+      </div>
+
+    </div>
+  </div>
+</div>

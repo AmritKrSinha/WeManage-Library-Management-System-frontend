@@ -1,0 +1,173 @@
+<div class="users-page">
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">
+  <img src="images/logo.png" alt="Logo" class="logo-img">
+
+</div>
+        <h1 class="logo-text">WeManage</h1>
+      </div>
+
+      <nav class="menu">
+        <a routerLink="/users" routerLinkActive="active" class="menu-item">Users</a>
+        <a routerLink="/books" routerLinkActive="active" class="menu-item">Books</a>
+        <a routerLink="/book-copies" routerLinkActive="active" class="menu-item">Book Copies</a>
+        <a routerLink="/borrows" routerLinkActive="active" class="menu-item">Borrows</a>
+        <a routerLink="/fines" routerLinkActive="active" class="menu-item">Fines</a>
+      </nav>
+
+      <button class="btn-logout" (click)="logout()">Logout</button>
+
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Header with Search -->
+      <header class="header">
+        <h2>Users</h2>
+        <div class="header-actions">
+          <input
+            type="text"
+            class="search-box"
+            placeholder="Search users..."
+            [(ngModel)]="searchText"
+            (input)="searchUsers()"
+          />
+        </div>
+      </header>
+
+      <!-- User Table -->
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Member ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Address</th>
+              <th>Role</th>
+              <th>Contact</th>
+              <th>User ID</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td>{{ user.memberId }}</td>
+              <td>{{ user.name }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.address }}</td>
+              <td>{{ user.role }}</td>
+              <td>{{ user.contact }}</td>
+              <td>{{ user.userId }}</td>
+              <td>
+                <button class="btn-view" (click)="openViewUserPopup(user)">View</button>
+                <button class="btn-update" (click)="openUpdateUserPopup(user)">Update</button>
+                <button class="btn-delete" (click)="openDeleteUserPopup(user)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+<br>
+      <!-- Add User Button Below Table -->
+      <div class="add-user-container">
+        <button class="btn-add-user" (click)="openAddUserPopup()">Add User</button>
+      </div>
+    </main>
+  </div>
+</div>
+<!-- Add User Popup -->
+<!-- Add User Popup -->
+<div class="popup-backdrop" *ngIf="showAddUserPopup">
+  <div class="popup">
+    <h3>Add New User</h3>
+    <form (ngSubmit)="saveNewUser()">
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="newUser.name" name="name" required />
+
+      <label>Email:</label>
+      <input type="email" [(ngModel)]="newUser.email" name="email" required />
+
+      <label>Address:</label>
+      <input type="text" [(ngModel)]="newUser.address" name="address" />
+
+      <label>Role:</label>
+      <input type="text" [(ngModel)]="newUser.role" name="role" />
+
+      <label>Contact:</label>
+      <input type="number" [(ngModel)]="newUser.contact" name="contact" />
+
+      <label>User ID:</label>
+      <input type="text" [(ngModel)]="newUser.userId" name="userId" required />
+
+      <label>Password:</label>
+      <input type="password" [(ngModel)]="newUser.password" name="password" required />
+
+      <div class="popup-actions">
+        <button type="submit" class="btn-primary">Save</button>
+        <button type="button" class="btn-secondary" (click)="closeAddUserPopup()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Update User Popup -->
+<div class="popup-backdrop" *ngIf="showUpdateUserPopup">
+  <div class="popup">
+    <h3>Update User</h3>
+    <form (ngSubmit)="saveUpdatedUser()">
+      <label>Member ID:</label>
+      <input type="number" [(ngModel)]="selectedUser.memberId" name="memberId" readonly />
+      <label>Name:</label>
+      <input type="text" [(ngModel)]="selectedUser.name" name="name" required />
+      <label>Email:</label>
+      <input type="email" [(ngModel)]="selectedUser.email" name="email" required />
+      <label>Address:</label>
+      <input type="text" [(ngModel)]="selectedUser.address" name="address" />
+      <label>Role:</label>
+      <input type="text" [(ngModel)]="selectedUser.role" name="role" />
+      <label>Contact:</label>
+      <input type="number" [(ngModel)]="selectedUser.contact" name="contact" />
+      <label>User ID:</label>
+      <input type="text" [(ngModel)]="selectedUser.userId" name="userId" required />
+      <label>Password:</label>
+      <input type="password" [(ngModel)]="selectedUser.password" name="password" required />
+      <div class="popup-actions">
+        <button type="submit" class="btn-primary">Update</button>
+        <button type="button" class="btn-secondary" (click)="closeUpdateUserPopup()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete User Popup -->
+<div class="popup-backdrop" *ngIf="showDeleteUserPopup">
+  <div class="popup">
+    <h3>Delete User</h3>
+    <p>Are you sure you want to delete <strong>{{selectedUser.name}}</strong>?</p>
+    <div class="popup-actions">
+      <button class="btn-danger" (click)="confirmDeleteUser()">Yes, Delete</button>
+      <button class="btn-secondary" (click)="closeDeleteUserPopup()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- View User Popup -->
+<div class="popup-backdrop" *ngIf="showViewUserPopup">
+  <div class="popup">
+    <h3>User Details</h3>
+    <p><strong>Member ID:</strong> {{ selectedUser.memberId }}</p>
+    <p><strong>Name:</strong> {{ selectedUser.name }}</p>
+    <p><strong>Email:</strong> {{ selectedUser.email }}</p>
+    <p><strong>Address:</strong> {{ selectedUser.address }}</p>
+    <p><strong>Role:</strong> {{ selectedUser.role }}</p>
+    <p><strong>Contact:</strong> {{ selectedUser.contact }}</p>
+    <p><strong>User ID:</strong> {{ selectedUser.userId }}</p>
+    <div class="popup-actions">
+      <button class="btn-secondary" (click)="closeViewUserPopup()">Close</button>
+    </div>
+  </div>
+</div>

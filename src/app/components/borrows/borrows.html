@@ -1,0 +1,159 @@
+<div class="borrows-page">
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon">
+  <img src="images/logo.png" alt="Logo" class="logo-img">
+
+</div>
+        <h1 class="logo-text">WeManage</h1>
+      </div>
+
+      <nav class="menu">
+        <a routerLink="/users" routerLinkActive="active" class="menu-item">Users</a>
+        <a routerLink="/books" routerLinkActive="active" class="menu-item">Books</a>
+        <a routerLink="/book-copies" routerLinkActive="active" class="menu-item">Book Copies</a>
+        <a routerLink="/borrows" routerLinkActive="active" class="menu-item">Borrows</a>
+        <a routerLink="/fines" routerLinkActive="active" class="menu-item">Fines</a>
+      </nav>
+
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </aside>
+ 
+
+    <!-- Main Content -->
+    <main class="content">
+      <header class="header">
+        <h2>Borrows</h2>
+        <div class="search-container">
+          <input type="text" class="search-box" placeholder="Search borrows..."
+                 [(ngModel)]="searchText" (input)="searchBorrows()" />
+        </div>
+      </header>
+
+      <!-- Table -->
+      <div class="table-card">
+        <table>
+          <thead>
+            <tr>
+              <th>Borrow ID</th>
+              <th>User Name</th>
+              <th>Book Copy</th>
+              <th>Issue Date</th>
+              <th>Due Date</th>
+              <th>Return Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let borrow of filteredBorrows">
+              <td>{{ borrow.borrowId }}</td>
+              <td>{{ borrow.userName || '-' }}</td>
+              <td>{{ borrow.bookCopyDisplay || '-' }}</td>
+              <td>{{ formatDate(borrow.issueDate) }}</td>
+              <td>{{ formatDate(borrow.dueDate) }}</td>
+              <td>{{ borrow.returnDate ? formatDate(borrow.returnDate) : '-' }}</td>
+              <td>
+                <span class="status" [ngClass]="{
+                  borrowed: borrow.borrowStatus === 'Issued',
+                  returned: borrow.borrowStatus === 'Returned',
+                  overdue: borrow.borrowStatus === 'Overdue'
+                }">{{ borrow.borrowStatus || '-' }}</span>
+              </td>
+              <td>
+                <button class="btn-view" (click)="openViewPopup(borrow)">View</button>
+                <button class="btn-update" (click)="openUpdatePopup(borrow)">Update</button>
+                <button class="btn-delete" (click)="openDeletePopup(borrow)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add Button -->
+      <div class="actions">
+        <button class="btn-primary" (click)="openAddPopup()">Add New Borrow</button>
+      </div>
+    </main>
+
+    <!-- ADD / UPDATE POPUP -->
+    <div class="popup-backdrop" *ngIf="showAddPopup || showUpdatePopup">
+      <div class="popup">
+        <h3>{{ showAddPopup ? 'Add Borrow' : 'Update Borrow' }}</h3>
+
+        <label>Member</label>
+        <select [(ngModel)]="currentBorrow.memberId" name="memberId" required>
+          <option [ngValue]="null">Select Member</option>
+          <option *ngFor="let member of members" [ngValue]="member.memberId ?? member.userId">
+            {{ member.memberName ?? member.name }}
+          </option>
+        </select>
+
+        <label>Book Copy</label>
+        <select [(ngModel)]="currentBorrow.copyId" name="copyId" required>
+          <option [ngValue]="null">Select Book Copy</option>
+          <option *ngFor="let copy of bookCopies" [ngValue]="copy.copyId">
+            {{ copy.bookName }} - Copy {{ copy.copyId }}
+          </option>
+        </select>
+
+        <label>Issue Date</label>
+        <input type="date" [(ngModel)]="currentBorrow.issueDate" name="issueDate"/>
+
+        <label>Due Date</label>
+        <input type="date" [(ngModel)]="currentBorrow.dueDate" name="dueDate"/>
+
+        <label>Return Date</label>
+        <input type="date" [(ngModel)]="currentBorrow.returnDate" name="returnDate"/>
+
+        <label>Status</label>
+        <select [(ngModel)]="currentBorrow.borrowStatus" name="borrowStatus">
+          <option value="Issued">Issued</option>
+          <option value="Returned">Returned</option>
+          <option value="Overdue">Overdue</option>
+        </select>
+
+        <div class="popup-actions">
+          <button class="btn-primary" (click)="showAddPopup ? saveNewBorrow() : saveUpdatedBorrow()">
+            {{ showAddPopup ? 'Add' : 'Update' }}
+          </button>
+          <button class="btn-secondary" (click)="showAddPopup ? closeAddPopup() : closeUpdatePopup()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DELETE POPUP -->
+    <div class="popup-backdrop" *ngIf="showDeletePopup && selectedBorrow">
+      <div class="popup">
+        <h3>Delete Borrow Record?</h3>
+        <p>Are you sure you want to delete Borrow ID {{ selectedBorrow.borrowId }}?</p>
+        <div class="popup-actions">
+          <button class="btn-danger" (click)="confirmDeleteBorrow()">Yes, Delete</button>
+          <button class="btn-secondary" (click)="closeDeletePopup()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW POPUP -->
+    <div class="popup-backdrop" *ngIf="showViewPopup && selectedBorrow">
+      <div class="popup">
+        <h3>Borrow Details</h3>
+        <p><strong>Borrow ID:</strong> {{ selectedBorrow.borrowId }}</p>
+        <p><strong>Member:</strong> {{ selectedBorrow.userName || '-' }}</p>
+        <p><strong>Book Copy:</strong> {{ selectedBorrow.bookCopyDisplay || '-' }}</p>
+        <p><strong>Issue Date:</strong> {{ formatDate(selectedBorrow.issueDate) }}</p>
+        <p><strong>Due Date:</strong> {{ formatDate(selectedBorrow.dueDate) }}</p>
+        <p><strong>Return Date:</strong> {{ selectedBorrow.returnDate ? formatDate(selectedBorrow.returnDate) : '-' }}</p>
+        <p><strong>Status:</strong> {{ selectedBorrow.borrowStatus || '-' }}</p>
+
+        <div class="popup-actions">
+          <button class="btn-secondary" (click)="closeViewPopup()">Close</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
