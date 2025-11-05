@@ -1,59 +1,44 @@
-# LibraryManagementUi
+# WeManage – Library Management System
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.4.
+WeManage is a web-based Library Management System designed to automate and streamline library operations such as managing books, users, borrows, fines, and book copies.
 
-## Development server
+## Tech Stack
+- **Frontend:** Angular  
+- **Backend:** Spring Boot  
+- **Build Tools:** Node.js, npm, Maven  
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## 🚀 Setup Instructions
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Backend (Spring Boot)
+1. Open the backend project in **Eclipse** or any IDE of your choice.  
+2. Ensure **Maven** is installed and all dependencies are resolved.  
+3. Run the Spring Boot application using:
+   ```bash
+   mvn spring-boot:run
+   ```
+4. The backend will start on [http://localhost:8080](http://localhost:8080).
 
-## Code scaffolding
+---
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Frontend (Angular)
+1. Navigate to the frontend project directory.  
+2. Install dependencies using:
+   ```bash
+   npm install
+   ```
+3. Run the Angular application:
+   ```bash
+   ng serve
+   ```
+4. Access the application at [http://localhost:4200](http://localhost:4200).
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-```bash
-ng generate --help
-```
+<img width="743" height="382" alt="image" src="https://github.com/user-attachments/assets/ac3a5bdb-855b-4aa1-93dc-65c506b2e3f8" />
+<img width="904" height="454" alt="image" src="https://github.com/user-attachments/assets/f9ab693a-f55c-4467-b513-3de277f698ed" />
+<img width="904" height="463" alt="image" src="https://github.com/user-attachments/assets/e32eb68c-844d-4316-b284-c98fdc11fc94" />
 
-## Building
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
